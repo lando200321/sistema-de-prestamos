@@ -1,0 +1,61 @@
+<header class="navbar">
+
+    <div class="navbar-izquierda">
+
+        <button type="button"
+                class="toggle-sidebar toggle-sidebar-movil"
+                id="toggle-sidebar-movil"
+                aria-label="Abrir menú"
+                aria-controls="sidebar"
+                aria-expanded="false">
+            <i data-lucide="menu"></i>
+        </button>
+
+        <div class="navbar-titulo">
+            <h2>Panel de control</h2>
+            <p>Sistema de Gestión de Préstamos</p>
+        </div>
+
+    </div>
+
+    <div class="navbar-derecha">
+
+        <!-- Fecha actual -->
+        <div class="navbar-fecha">
+            <i data-lucide="calendar-days"></i>
+            <span>{% now "d/m/Y" %}</span>
+        </div>
+
+        <!-- Notificaciones -->
+        <button type="button"
+                class="btn-notificaciones"
+                title="Notificaciones"
+                aria-label="Notificaciones"
+                disabled>
+
+            <i data-lucide="bell"></i>
+
+        </button>
+
+        <div class="navbar-separador"></div>
+
+        <!-- Perfil del usuario -->
+        <div class="perfil-usuario">
+
+            <div class="perfil-avatar">
+                {{ usuario.nombres|first|upper }}
+            </div>
+
+            <div class="perfil-informacion">
+
+                <strong>{{ usuario.nombres }}</strong>
+
+                <span>{{ usuario.nombre_usuario }}</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>

@@ -1,0 +1,8 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block titulo %}Importar ubigeo | Configuración{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/configuracion.css' %}">{% endblock %}
+{% block contenido %}
+<header class="config-encabezado"><div><a class="config-miga" href="{% url 'configuracion:ubigeo' %}">Ubigeo</a><h1>Importar ubigeo</h1><p>Carga un archivo CSV UTF-8 descargado de una fuente oficial. No reemplaza ni elimina códigos existentes.</p></div></header>
+<section class="config-panel config-form-panel"><div class="config-aviso">Columnas requeridas: <code>codigo, departamento, provincia, distrito</code>. Cada código debe tener seis dígitos. El archivo se valida completo antes de guardar.</div><form method="post" enctype="multipart/form-data">{% csrf_token %}{% if formulario.non_field_errors %}<div class="config-error" role="alert">{{ formulario.non_field_errors }}</div>{% endif %}{% for field in formulario %}<div class="config-campo"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}<small>{{ field.help_text }}</small>{% for error in field.errors %}<small class="config-error-text">{{ error }}</small>{% endfor %}</div>{% endfor %}<div class="config-form-acciones"><a class="config-boton secundario" href="{% url 'configuracion:ubigeo' %}">Cancelar</a><button class="config-boton primario" type="submit">Validar e importar</button></div></form></section>
+{% endblock %}

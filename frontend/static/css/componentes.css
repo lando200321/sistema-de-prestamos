@@ -1,0 +1,232 @@
+/* ==========================================
+   BOTONES GENERALES
+========================================== */
+
+.btn-primario,
+.btn-secundario {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .2s ease;
+    white-space: nowrap;
+}
+
+.btn-primario {
+    background: #005c42;
+    color: #ffffff;
+    border: 1px solid #005c42;
+}
+
+.btn-primario:hover:not(:disabled) {
+    background: #033b3b;
+}
+
+.btn-secundario {
+    background: #ffffff;
+    color: #005c42;
+    border: 1px solid #e2e8e5;
+}
+
+.btn-secundario:hover {
+    background: #f0f8f3;
+}
+
+.btn-primario svg,
+.btn-secundario svg {
+    width: 17px;
+    height: 17px;
+}
+
+.btn-primario:disabled,
+.btn-accion:disabled,
+.pestana:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   ESTADOS
+========================================== */
+
+.estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.estado::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.estado.activo {
+    background: #e7f8ed;
+    color: #008b43;
+}
+
+.estado.inactivo {
+    background: #feecec;
+    color: #dc2626;
+}
+
+.estado.bloqueado {
+    background: #fff4df;
+    color: #b45309;
+}
+
+
+/* ==========================================
+   BOTONES DE ACCIONES
+========================================== */
+
+.btn-accion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    border: 1px solid #e2e8e5;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #005c42;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.btn-accion svg {
+    width: 15px;
+    height: 15px;
+}
+
+.btn-accion:hover:not(:disabled) {
+    background: #e7f8ed;
+}
+
+.btn-accion.advertencia {
+    color: #d97706;
+}
+
+.btn-accion.peligro {
+    color: #dc2626;
+}
+
+.btn-accion.peligro:hover:not(:disabled) {
+    background: #feecec;
+}
+
+
+/* ==========================================
+   PAGINACIÓN
+========================================== */
+
+.paginacion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 20px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.paginacion-controles {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagina-actual {
+    color: #033b3b;
+    font-weight: 600;
+}
+/* ==========================================
+   BOTÓN ACTIVAR
+========================================== */
+
+.btn-accion.exito {
+    color: #009b43;
+}
+
+.btn-accion.exito:hover {
+    background: #e7f8ed;
+    border-color: #009b43;
+}
+
+
+/* ==========================================
+   NOTIFICACIONES DEL SISTEMA
+========================================== */
+
+.notificaciones-sistema {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.notificacion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 1px solid #dcebe1;
+    border-radius: 12px;
+    background: #f0f8f3;
+    color: #005c42;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.notificacion.success {
+    background: #e7f8ed;
+    border-color: #b8e8c7;
+    color: #008b43;
+}
+
+.notificacion.error {
+    background: #feecec;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.notificacion > svg {
+    width: 21px;
+    height: 21px;
+    flex-shrink: 0;
+}
+
+.notificacion span {
+    flex: 1;
+}
+
+.cerrar-notificacion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+.cerrar-notificacion svg {
+    width: 18px;
+    height: 18px;
+}

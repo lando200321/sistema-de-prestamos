@@ -1,0 +1,156 @@
+{% load static %}
+
+<aside class="sidebar" id="sidebar">
+
+    <button type="button"
+            id="toggle-sidebar"
+            class="toggle-sidebar"
+            aria-label="Comprimir menú"
+            aria-controls="sidebar"
+            aria-expanded="true">
+
+        <i data-lucide="menu"></i>
+
+    </button>
+
+    <div class="sidebar-marca">
+
+        <div class="marca-icono">
+            <i data-lucide="chart-no-axes-combined"></i>
+        </div>
+
+        <div class="marca-texto">
+            Sistema de<br>
+            Gestión de <span>Préstamos</span>
+        </div>
+
+    </div>
+
+    <nav class="sidebar-menu">
+
+        <!-- DASHBOARD -->
+        <a href="{% url 'autenticacion:dashboard' %}"
+           class="menu-item {% if request.resolver_match.url_name == 'dashboard' %}activo{% endif %}">
+
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+
+        </a>
+
+        <!-- CLIENTES -->
+        <button class="menu-item" disabled>
+            <i data-lucide="users"></i>
+            <span>Clientes</span>
+        </button>
+
+        <!-- SOLICITUDES DE CRÉDITO -->
+        <button class="menu-item" disabled>
+            <i data-lucide="file-text"></i>
+            <span>Solicitudes de crédito</span>
+        </button>
+
+        <!-- PRÉSTAMOS -->
+        <button class="menu-item" disabled>
+            <i data-lucide="coins"></i>
+            <span>Préstamos</span>
+        </button>
+
+        <!-- GARANTÍAS -->
+        <button class="menu-item" disabled>
+            <i data-lucide="shield-check"></i>
+            <span>Garantías</span>
+        </button>
+
+        <!-- CAJA Y DESEMBOLSOS -->
+        <button class="menu-item" disabled>
+            <i data-lucide="wallet"></i>
+            <span>Caja y desembolsos</span>
+        </button>
+
+        <!-- PAGOS Y COBRANZAS -->
+        <button class="menu-item" disabled>
+            <i data-lucide="calendar-days"></i>
+            <span>Pagos y cobranzas</span>
+        </button>
+
+        <!-- REPORTES -->
+        <button class="menu-item" disabled>
+            <i data-lucide="chart-no-axes-column"></i>
+            <span>Reportes</span>
+        </button>
+
+        <!-- CUMPLIMIENTO -->
+        <button class="menu-item" disabled>
+            <i data-lucide="clipboard-check"></i>
+            <span>Cumplimiento</span>
+        </button>
+
+        <!-- USUARIOS Y ROLES -->
+        <a href="{% url 'autenticacion:usuarios' %}"
+           class="menu-item {% if request.resolver_match.url_name == 'usuarios' %}activo{% endif %}">
+
+            <i data-lucide="users-round"></i>
+            <span>Usuarios y roles</span>
+
+        </a>
+
+        <a href="{% url 'autenticacion:roles' %}"
+           class="menu-item {% if request.resolver_match.url_name|slice:':4' == 'rol_' or request.resolver_match.url_name == 'roles' %}activo{% endif %}">
+            <i data-lucide="shield-check"></i><span>Roles</span>
+        </a>
+
+        <a href="{% url 'autenticacion:permisos' %}"
+           class="menu-item {% if request.resolver_match.url_name == 'permisos' %}activo{% endif %}">
+            <i data-lucide="key-round"></i><span>Permisos</span>
+        </a>
+
+        <a href="{% url 'autenticacion:sesiones' %}"
+           class="menu-item {% if request.resolver_match.url_name == 'sesiones' %}activo{% endif %}">
+            <i data-lucide="monitor-cog"></i><span>Sesiones</span>
+        </a>
+
+        <a href="{% url 'autenticacion:accesos' %}"
+           class="menu-item {% if request.resolver_match.url_name == 'accesos' %}activo{% endif %}">
+            <i data-lucide="log-in"></i><span>Accesos</span>
+        </a>
+
+        <a href="{% url 'autenticacion:auditoria' %}"
+           class="menu-item {% if request.resolver_match.url_name == 'auditoria' %}activo{% endif %}">
+            <i data-lucide="clipboard-list"></i><span>Auditoría</span>
+        </a>
+
+        <!-- CONFIGURACIÓN -->
+        <button class="menu-item" disabled>
+            <i data-lucide="settings"></i>
+            <span>Configuración</span>
+        </button>
+
+        <a href="{% url 'configuracion:panel' %}"
+           class="menu-item {% if request.resolver_match.namespace == 'configuracion' %}activo{% endif %}">
+            <i data-lucide="settings-2"></i>
+            <span>Configuración general</span>
+        </a>
+
+    </nav>
+
+    <!-- CERRAR SESIÓN -->
+    <div class="sidebar-footer">
+
+        <form method="POST"
+              action="{% url 'autenticacion:logout' %}">
+
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="menu-item cerrar-sesion">
+
+                <i data-lucide="log-out"></i>
+                <span>Cerrar sesión</span>
+
+            </button>
+
+        </form>
+
+    </div>
+
+</aside>

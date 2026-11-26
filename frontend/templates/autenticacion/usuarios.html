@@ -1,0 +1,555 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block titulo %}
+    Usuarios y roles | Sistema de Gestión de Préstamos
+{% endblock %}
+
+
+{% block estilos %}
+
+    <link rel="stylesheet"
+          href="{% static 'css/componentes.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'css/usuarios.css' %}">
+
+{% endblock %}
+
+
+{% block contenido %}
+{% if messages %}
+
+    <div class="notificaciones-sistema">
+
+        {% for message in messages %}
+
+            <div class="notificacion {{ message.tags }}"
+                 role="status">
+
+                {% if message.tags == "error" %}
+
+                    <i data-lucide="circle-alert"></i>
+
+                {% else %}
+
+                    <i data-lucide="circle-check"></i>
+
+                {% endif %}
+
+                <span>{{ message }}</span>
+
+                <button type="button"
+                        class="cerrar-notificacion"
+                        aria-label="Cerrar notificación">
+
+                    <i data-lucide="x"></i>
+
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+<!-- =====================================
+     ENCABEZADO PRINCIPAL
+====================================== -->
+
+<section class="usuarios-encabezado">
+
+    <div>
+        <h1>Usuarios y roles</h1>
+
+        <p>
+            Administración de usuarios, roles y permisos del sistema.
+        </p>
+    </div>
+
+    <a href="{% url 'autenticacion:usuario_crear' %}" class="btn-primario">
+        <i data-lucide="user-plus" aria-hidden="true"></i>
+        Nuevo usuario
+    </a>
+
+</section>
+
+
+<!-- =====================================
+     TARJETAS DE INDICADORES
+====================================== -->
+
+<section class="usuarios-indicadores"
+         aria-label="Resumen de usuarios">
+
+    <article class="usuario-indicador">
+
+        <span>Total de usuarios</span>
+
+        <strong>{{ indicadores.total }}</strong>
+
+    </article>
+
+    <article class="usuario-indicador">
+
+        <span>Usuarios activos</span>
+
+        <strong>{{ indicadores.activos }}</strong>
+
+    </article>
+
+    <article class="usuario-indicador">
+
+        <span>Usuarios inactivos</span>
+
+        <strong>{{ indicadores.inactivos }}</strong>
+
+    </article>
+
+    <article class="usuario-indicador">
+
+        <span>Cuentas bloqueadas</span>
+
+        <strong>{{ indicadores.bloqueados }}</strong>
+
+    </article>
+
+</section>
+
+
+<!-- =====================================
+     PANEL DE USUARIOS
+====================================== -->
+
+<section class="panel-usuarios">
+
+    <!-- ENCABEZADO DE LA TABLA -->
+
+    <div class="panel-encabezado">
+
+        <div>
+
+            <h2>Usuarios registrados</h2>
+
+            <p>
+                Administra las cuentas de acceso al sistema.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- BUSCADOR Y FILTROS -->
+
+    <form method="GET" class="filtros-usuarios">
+
+        <div class="campo-busqueda">
+
+            <i data-lucide="search"></i>
+
+            <input type="search"
+                   name="buscar"
+                   value="{{ busqueda }}"
+                   aria-label="Buscar usuario"
+                   placeholder="Buscar por nombre, DNI o usuario...">
+
+        </div>
+
+
+        <!-- FILTRO POR ESTADO -->
+
+        <select name="estado" aria-label="Estado">
+
+            <option value="">
+                Todos los estados
+            </option>
+
+            <option value="activo"
+                {% if estado == 'activo' %}selected{% endif %}>
+                Activos
+            </option>
+
+            <option value="inactivo"
+                {% if estado == 'inactivo' %}selected{% endif %}>
+                Inactivos
+            </option>
+
+            <option value="bloqueado"
+                {% if estado == 'bloqueado' %}selected{% endif %}>
+                Bloqueados
+            </option>
+
+        </select>
+
+
+        <!-- FILTRO POR ROL -->
+
+        <select name="rol" aria-label="Rol">
+
+            <option value="">
+                Todos los roles
+            </option>
+
+            {% for rol in roles %}
+
+                <option value="{{ rol.id }}"
+                    {% if rol_seleccionado == rol.id|stringformat:"s" %}
+                        selected
+                    {% endif %}>
+
+                    {{ rol.nombre }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <!-- BOTÓN FILTRAR -->
+
+        <button type="submit" class="btn-primario">
+
+            <i data-lucide="list-filter"></i>
+            Filtrar
+
+        </button>
+
+
+        <!-- BOTÓN LIMPIAR -->
+
+        <a href="{% url 'autenticacion:usuarios' %}"
+           class="btn-secundario"
+           aria-label="Limpiar filtros"
+           title="Limpiar filtros">
+
+            <i data-lucide="rotate-ccw"></i>
+
+        </a>
+
+    </form>
+
+
+    <!-- =====================================
+         TABLA DE USUARIOS
+    ====================================== -->
+
+    <div class="tabla-contenedor">
+
+        <table class="tabla-usuarios">
+
+            <thead>
+
+                <tr>
+
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for item in usuarios %}
+
+                <tr>
+
+                    <!-- PERFIL -->
+
+                    <td>
+
+                        <div class="usuario-perfil">
+
+                            <div class="usuario-avatar"
+                                 aria-label="Iniciales de {{ item.nombre_completo }}"
+                                 title="{{ item.nombre_completo }}">{{ item.nombres|first|upper }}{{ item.apellidos|first|upper }}</div>
+
+                            <div>
+
+                                <strong>
+                                    {{ item.nombre_completo }}
+                                </strong>
+
+                                <small>
+                                    @{{ item.nombre_usuario }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <!-- ROLES ASIGNADOS -->
+
+                    <td>
+
+                        {% for asignacion in item.roles_asignados.all %}
+
+                            <span class="etiqueta-rol">
+
+                                {{ asignacion.rol.nombre }}
+
+                                {% if not asignacion.rol.activo %}
+                                    (Inactivo)
+                                {% endif %}
+
+                            </span>
+
+                        {% empty %}
+
+                            Sin rol asignado
+
+                        {% endfor %}
+
+                    </td>
+
+
+                    <!-- ESTADO -->
+
+                    <td>
+
+                        {% if not item.activo %}
+
+                            <span class="estado inactivo">
+                                Inactivo
+                            </span>
+
+                        {% elif item.esta_bloqueado %}
+
+                            <span class="estado bloqueado">
+                                Bloqueado
+                            </span>
+
+                        {% else %}
+
+                            <span class="estado activo">
+                                Activo
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ACCIONES -->
+
+                    <td>
+
+                        <div class="acciones-usuario">
+
+                            <!-- EDITAR -->
+
+                            <a href="{% url 'autenticacion:usuario_editar' item.id %}"
+                                class="btn-accion"
+                                aria-label="Editar usuario"
+                                title="Editar usuario">
+
+                                <i data-lucide="pencil"></i>
+
+                            </a>
+
+                            <a href="{% url 'autenticacion:usuario_roles' item.id %}"
+                               class="btn-accion"
+                               aria-label="Modificar roles"
+                               title="Modificar roles">
+                                <i data-lucide="shield-check"></i>
+                            </a>
+
+                            <a href="{% url 'autenticacion:usuario_password' item.id %}"
+                               class="btn-accion"
+                               aria-label="Restablecer contraseña"
+                               title="Restablecer contraseña">
+                                <i data-lucide="key-round"></i>
+                            </a>
+
+                            {% if item.activo and item.esta_bloqueado %}
+                            <form method="POST"
+                                  action="{% url 'autenticacion:usuario_desbloquear' item.id %}"
+                                  class="formulario-estado"
+                                  data-accion="desbloquear"
+                                  data-usuario="{{ item.nombre_completo }}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="btn-accion exito"
+                                        aria-label="Desbloquear usuario {{ item.nombre_completo }}"
+                                        title="Desbloquear usuario">
+                                    <i data-lucide="unlock"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+
+
+                            <!-- ACTIVAR O DESACTIVAR -->
+
+                            {% if item.id == usuario.id %}
+
+                            <button type="button"
+                                    class="btn-accion advertencia"
+                                    aria-label="No puedes desactivar tu propia cuenta"
+                                    title="No puedes desactivar tu propia cuenta"
+                                    disabled>
+                                <i data-lucide="power"></i>
+                            </button>
+
+{% elif item.activo %}
+
+    <form method="POST"
+          action="{% url 'autenticacion:usuario_desactivar' item.id %}"
+          class="formulario-estado"
+          data-accion="desactivar"
+          data-usuario="{{ item.nombre_completo }}">
+
+        {% csrf_token %}
+
+        <button type="submit"
+                class="btn-accion advertencia"
+                aria-label="Desactivar usuario"
+                title="Desactivar usuario">
+
+            <i data-lucide="power"></i>
+
+        </button>
+
+    </form>
+
+{% else %}
+
+    <form method="POST"
+          action="{% url 'autenticacion:usuario_activar' item.id %}"
+          class="formulario-estado"
+          data-accion="activar"
+          data-usuario="{{ item.nombre_completo }}">
+
+        {% csrf_token %}
+
+        <button type="submit"
+                class="btn-accion exito"
+                aria-label="Activar usuario"
+                title="Activar usuario">
+
+            <i data-lucide="power"></i>
+
+        </button>
+
+    </form>
+
+{% endif %}
+
+{% if item.id == usuario.id %}
+    <button type="button"
+            class="btn-accion peligro"
+            aria-label="No puedes eliminar tu propia cuenta"
+            title="No puedes eliminar tu propia cuenta"
+            disabled>
+        <i data-lucide="trash-2"></i>
+    </button>
+{% else %}
+    <form method="POST"
+          action="{% url 'autenticacion:usuario_eliminar' item.id %}"
+          class="formulario-estado"
+          data-accion="eliminar"
+          data-usuario="{{ item.nombre_completo }}">
+        {% csrf_token %}
+        <button type="submit"
+                class="btn-accion peligro"
+                aria-label="Eliminar usuario"
+                title="Eliminar usuario">
+            <i data-lucide="trash-2"></i>
+        </button>
+    </form>
+{% endif %}
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="4" class="tabla-vacia">
+
+                        <i data-lucide="users"></i>
+
+                        <p>
+                            No se encontraron usuarios.
+                        </p>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    <!-- =====================================
+         PAGINACIÓN
+    ====================================== -->
+
+    <div class="paginacion">
+
+        <span>
+
+            Mostrando {{ usuarios.start_index }}
+            - {{ usuarios.end_index }}
+            de {{ usuarios.paginator.count }} usuarios
+
+        </span>
+
+        <div class="paginacion-controles">
+
+            {% if usuarios.has_previous %}
+
+                <a href="?pagina={{ usuarios.previous_page_number }}&amp;buscar={{ busqueda|urlencode }}&amp;estado={{ estado|urlencode }}&amp;rol={{ rol_seleccionado|urlencode }}"
+                   class="btn-secundario"
+                   aria-label="Página anterior">
+
+                    <i data-lucide="chevron-left"></i>
+
+                </a>
+
+            {% endif %}
+
+            <span class="pagina-actual">
+
+                {{ usuarios.number }}
+                de {{ usuarios.paginator.num_pages }}
+
+            </span>
+
+            {% if usuarios.has_next %}
+
+                <a href="?pagina={{ usuarios.next_page_number }}&amp;buscar={{ busqueda|urlencode }}&amp;estado={{ estado|urlencode }}&amp;rol={{ rol_seleccionado|urlencode }}"
+                   class="btn-secundario"
+                   aria-label="Página siguiente">
+
+                    <i data-lucide="chevron-right"></i>
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'js/usuario.js' %}" defer></script>
+{% endblock %}
+{% endblock %}

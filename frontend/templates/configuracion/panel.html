@@ -1,0 +1,47 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block titulo %}Configuración general | Sistema de Préstamos{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/configuracion.css' %}">{% endblock %}
+{% block contenido %}
+<header class="config-encabezado">
+  <div><span class="config-eyebrow">ADMINISTRACIÓN DEL SISTEMA</span><h1>Configuración general</h1><p>Parámetros institucionales, catálogos y reglas operativas.</p></div>
+</header>
+<section class="config-indicadores" aria-label="Indicadores de configuración">
+  <article><span>Sucursales activas</span><strong>{{ resumen.sucursales }}</strong></article>
+  <article><span>Productos activos</span><strong>{{ resumen.productos }}</strong></article>
+  <article><span>Tasas vigentes</span><strong>{{ resumen.tasas_vigentes }}</strong></article>
+  <article><span>Políticas vigentes</span><strong>{{ resumen.politicas_vigentes }}</strong></article>
+</section>
+{% if resumen.alertas.tasas_por_vencer or resumen.alertas.limites_por_vencer or resumen.alertas.productos_incompletos or resumen.alertas.productos_sin_frecuencia or resumen.alertas.productos_sin_tasa or resumen.alertas.productos_sin_politica %}
+<section class="config-alertas" aria-label="Alertas de configuración">
+  <h2><i data-lucide="triangle-alert"></i> Revisión pendiente</h2>
+  <ul>
+    {% if resumen.alertas.tasas_por_vencer %}<li>{{ resumen.alertas.tasas_por_vencer }} tasas vencen en los próximos 30 días.</li>{% endif %}
+    {% if resumen.alertas.limites_por_vencer %}<li>{{ resumen.alertas.limites_por_vencer }} límites vencen en los próximos 30 días.</li>{% endif %}
+    {% if resumen.alertas.productos_incompletos %}<li>{{ resumen.alertas.productos_incompletos }} productos no tienen garantías activas asignadas.</li>{% endif %}
+    {% if resumen.alertas.productos_sin_frecuencia %}<li>{{ resumen.alertas.productos_sin_frecuencia }} productos no tienen frecuencias de pago activas asignadas.</li>{% endif %}
+    {% if resumen.alertas.productos_sin_tasa %}<li>{{ resumen.alertas.productos_sin_tasa }} productos no tienen una tasa vigente.</li>{% endif %}
+    {% if resumen.alertas.productos_sin_politica %}<li>{{ resumen.alertas.productos_sin_politica }} productos no tienen una política vigente.</li>{% endif %}
+  </ul>
+</section>
+{% endif %}
+<div class="config-grupos">
+  {% for grupo in resumen.tarjetas %}
+  <section class="config-grupo">
+    <h2>{{ grupo.grupo }}</h2>
+    <div class="config-enlaces">
+      {% for enlace in grupo.enlaces %}
+      <a class="config-enlace" href="{% url enlace.url_name %}">
+        <span class="config-enlace-icono"><i data-lucide="settings-2"></i></span>
+        <span><strong>{{ enlace.titulo }}</strong><small>Consultar y administrar</small></span>
+        <i class="config-flecha" data-lucide="arrow-up-right"></i>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% empty %}
+  <div class="config-vacio">Tu cuenta no tiene accesos de configuración asignados.</div>
+  {% endfor %}
+</div>
+{% if 'CONFIGURACION_AUDITORIA_VER' in resumen.permisos %}<section class="config-grupo config-cambios"><h2>Cambios recientes</h2><div class="config-tabla-wrap"><table class="config-tabla"><thead><tr><th>Fecha</th><th>Usuario</th><th>Tabla</th><th>Operación</th></tr></thead><tbody>{% for cambio in resumen.cambios_recientes %}<tr><td>{{ cambio.fecha|date:"d/m/Y H:i" }}</td><td>{{ cambio.usuario_aplicacion_id|default:cambio.usuario_bd }}</td><td>{{ cambio.esquema }}.{{ cambio.tabla }}</td><td>{{ cambio.operacion }}</td></tr>{% empty %}<tr><td colspan="4">No hay cambios registrados.</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+{% endblock %}

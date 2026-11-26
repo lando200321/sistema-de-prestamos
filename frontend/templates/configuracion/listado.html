@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block titulo %}{{ recurso.titulo }} | Configuración{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/configuracion.css' %}">{% endblock %}
+{% block contenido %}
+{% if messages %}<div class="config-mensajes">{% for message in messages %}<p class="config-mensaje {{ message.tags }}" role="status">{{ message }}</p>{% endfor %}</div>{% endif %}
+<header class="config-encabezado config-encabezado-lista">
+  <div><a class="config-miga" href="{% url 'configuracion:panel' %}">Configuración general</a><h1>{{ recurso.titulo }}</h1><p>Consulta y administra los registros de este catálogo.</p></div>
+  {% if puede_crear %}<a class="config-boton primario" href="{% url 'configuracion:'|add:slug|cut:'-'|add:'_nuevo' %}"><i data-lucide="plus"></i> Nuevo registro</a>{% endif %}
+</header>
+{% if slug == 'productos' %}<div class="config-aviso">Los montos, plazos y tasas configurados son condiciones operativas. Valida la información con el responsable financiero antes de habilitar productos.</div>{% endif %}
+{% if slug == 'limites-interes' %}<div class="config-aviso">No se precargan tasas legales. Registra límites con fuente oficial verificada y fecha de vigencia.</div>{% endif %}
+{% if slug == 'ubigeo' and 'UBIGEO_IMPORTAR' in usuario_permisos %}<p><a class="config-boton secundario" href="{% url 'configuracion:ubigeo_importar' %}">Importar CSV oficial</a></p>{% endif %}
+<section class="config-panel">
+  <form method="get" class="config-filtros">
+    <label class="config-busqueda"><span class="visually-hidden">Buscar</span><i data-lucide="search"></i><input type="search" name="buscar" value="{{ buscar }}" placeholder="Buscar en {{ recurso.titulo|lower }}…"></label>
+    {% if tiene_estado %}<label><span class="visually-hidden">Estado</span><select name="estado"><option value="">Todos los estados</option><option value="activo" {% if estado == 'activo' %}selected{% endif %}>Activos</option><option value="inactivo" {% if estado == 'inactivo' %}selected{% endif %}>Inactivos</option></select></label>{% endif %}
+    {% if slug == 'feriados' %}<label><span class="visually-hidden">Año</span><input type="number" name="anio" min="1900" max="2200" value="{{ anio }}" placeholder="Filtrar por año"></label>{% endif %}
+    {% if slug == 'tipos-cambio' %}<label><span class="visually-hidden">Fecha</span><input type="date" name="fecha" value="{{ fecha }}" aria-label="Filtrar por fecha"></label><label><span class="visually-hidden">Moneda</span><select name="moneda"><option value="">Todas las monedas</option>{% for item in monedas %}<option value="{{ item.codigo }}" {% if moneda == item.codigo %}selected{% endif %}>{{ item.codigo }} — {{ item.nombre }}</option>{% endfor %}</select></label><input name="fuente" value="{{ fuente }}" placeholder="Fuente">{% endif %}
+    {% if slug == 'productos' or slug == 'tasas-interes' %}<label><span class="visually-hidden">Moneda</span><select name="moneda"><option value="">Todas las monedas</option>{% for item in monedas %}<option value="{{ item.codigo }}" {% if moneda == item.codigo %}selected{% endif %}>{{ item.codigo }} — {{ item.nombre }}</option>{% endfor %}</select></label>{% endif %}
+    <button class="config-boton primario" type="submit"><i data-lucide="list-filter"></i> Filtrar</button><a class="config-boton secundario" href="{% url 'configuracion:'|add:slug|cut:'-' %}" aria-label="Limpiar filtros" title="Limpiar filtros"><i data-lucide="rotate-ccw"></i></a>
+  </form>
+  <div class="config-tabla-wrap" role="region" aria-label="{{ recurso.titulo }}" tabindex="0"><table class="config-tabla"><thead><tr>{% for nombre, ruta in recurso.campos %}<th scope="col">{{ nombre }}</th>{% endfor %}<th scope="col">Acciones</th></tr></thead>
+    <tbody>{% for fila in filas %}<tr>{% for celda in fila.celdas %}<td>{% if celda.valor == True %}<span class="config-estado activo">Activo</span>{% elif celda.valor == False %}<span class="config-estado inactivo">Inactivo</span>{% else %}{{ celda.valor }}{% endif %}</td>{% endfor %}<td><div class="config-acciones">
+      {% if puede_editar %}<a class="config-icono" href="{% url 'configuracion:'|add:slug|cut:'-'|add:'_editar' fila.objeto.pk %}" aria-label="Editar registro" title="Editar"><i data-lucide="pencil"></i></a>{% endif %}
+      {% if slug == 'productos' and puede_configurar_relaciones %}<a class="config-icono" href="{% url 'configuracion:producto_relaciones' fila.objeto.pk %}" aria-label="Configurar garantías y frecuencias" title="Garantías y frecuencias"><i data-lucide="list-checks"></i></a>{% endif %}
+      {% if puede_activar and fila.objeto.activo == False %}<form method="post" action="{% url 'configuracion:'|add:slug|cut:'-'|add:'_estado' fila.objeto.pk %}" data-confirm="¿Activar este registro?">{% csrf_token %}<button class="config-icono exito" aria-label="Activar registro" title="Activar"><i data-lucide="power"></i></button></form>{% elif puede_desactivar and fila.objeto.activo == True %}<form method="post" action="{% url 'configuracion:'|add:slug|cut:'-'|add:'_estado' fila.objeto.pk %}" data-confirm="¿Desactivar este registro? Se conservará el historial.">{% csrf_token %}<button class="config-icono advertencia" aria-label="Desactivar registro" title="Desactivar"><i data-lucide="power"></i></button></form>{% endif %}
+    </div></td></tr>{% empty %}<tr><td class="config-sin-datos" colspan="20">No hay registros que coincidan con la búsqueda.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <footer class="config-paginacion"><span>{{ pagina.start_index }}–{{ pagina.end_index }} de {{ pagina.paginator.count }} registros</span><nav aria-label="Paginación">{% if pagina.has_previous %}<a href="?{{ filtros_url }}&pagina={{ pagina.previous_page_number }}" aria-label="Página anterior">‹</a>{% endif %}<span>{{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>{% if pagina.has_next %}<a href="?{{ filtros_url }}&pagina={{ pagina.next_page_number }}" aria-label="Página siguiente">›</a>{% endif %}</nav></footer>
+</section>
+{% endblock %}
+{% block scripts %}{{ block.super }}<script src="{% static 'js/configuracion.js' %}" defer></script>{% endblock %}

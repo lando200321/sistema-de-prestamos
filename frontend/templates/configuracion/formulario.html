@@ -1,0 +1,13 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block titulo %}{% if es_edicion %}Editar{% else %}Nuevo{% endif %} — {{ recurso.titulo }}{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/configuracion.css' %}">{% endblock %}
+{% block contenido %}
+<header class="config-encabezado"><div><a class="config-miga" href="{% url 'configuracion:'|add:slug|cut:'-' %}">Volver a {{ recurso.titulo }}</a><h1>{% if es_edicion %}Editar{% else %}Crear{% endif %} {{ recurso.titulo|lower }}</h1><p>Completa los datos y guarda los cambios.</p></div></header>
+<section class="config-panel config-form-panel"><form method="post" enctype="multipart/form-data" novalidate>{% csrf_token %}
+  {% if formulario.non_field_errors %}<div class="config-error" role="alert">{{ formulario.non_field_errors }}</div>{% endif %}
+  <div class="config-campos">{% for field in formulario %}<div class="config-campo {% if field.field.widget.input_type == 'checkbox' %}check{% endif %}"><label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span aria-hidden="true"> *</span>{% endif %}</label>{% if field.name == 'ubigeo' %}<div class="config-ubigeo" data-ubigeo-url="{% url 'configuracion:api_ubigeo' %}" data-codigo="{{ field.value|default:'' }}"><select class="config-control" data-departamento aria-label="Departamento"><option value="">Departamento</option></select><select class="config-control" data-provincia aria-label="Provincia" disabled><option value="">Provincia</option></select><select class="config-control" data-distrito aria-label="Distrito" disabled><option value="">Distrito</option></select></div>{{ field.as_hidden }}{% else %}{{ field }}{% endif %}{% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}{% for error in field.errors %}<small class="config-error-text">{{ error }}</small>{% endfor %}</div>{% endfor %}</div>
+  {% if slug == 'empresa' and instancia.logo %}<div class="config-logo-actual"><span>Logo actual</span><img src="{{ media_url }}{{ instancia.logo }}" alt="Logo registrado de la empresa"></div>{% endif %}
+  <div class="config-form-acciones"><a class="config-boton secundario" href="{% url 'configuracion:'|add:slug|cut:'-' %}">Cancelar</a><button class="config-boton primario" type="submit"><i data-lucide="save"></i> Guardar</button></div>
+</form></section>
+{% endblock %}

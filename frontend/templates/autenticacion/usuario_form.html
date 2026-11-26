@@ -1,0 +1,57 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block titulo %}Registrar usuario | Sistema de Gestión de Préstamos{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{% static 'css/usuarios.css' %}">
+{% endblock %}
+
+{% block contenido %}
+<section class="usuarios-encabezado">
+    <div>
+        <h1>Registrar usuario</h1>
+        <p>Crea una cuenta individual y asigna los roles correspondientes.</p>
+    </div>
+    <a class="usuarios-volver" href="{% url 'autenticacion:usuarios' %}">Volver al directorio</a>
+</section>
+
+<section class="usuarios-panel formulario-usuario-panel">
+    {% if formulario.non_field_errors %}
+        <div class="formulario-alerta" role="alert">{{ formulario.non_field_errors }}</div>
+    {% endif %}
+    <form method="post" class="formulario-usuario" novalidate>
+        {% csrf_token %}
+        <div class="formulario-campos">
+            {% for field in formulario %}
+                {% if field.name != 'roles' %}
+                <div class="campo-usuario {% if field.errors %}campo-con-error{% endif %}">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+                    {% for error in field.errors %}<small class="error-campo">{{ error }}</small>{% endfor %}
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <fieldset class="campo-roles {% if formulario.roles.errors %}campo-con-error{% endif %}">
+            <legend>{{ formulario.roles.label }}</legend>
+            <p>Selecciona uno o más roles para esta cuenta.</p>
+            <div class="opciones-roles">
+                {% for checkbox in formulario.roles %}
+                    <label class="opcion-rol">{{ checkbox.tag }}<span>{{ checkbox.choice_label }}</span></label>
+                {% empty %}
+                    <p class="sin-roles-disponibles">No hay roles activos disponibles.</p>
+                {% endfor %}
+            </div>
+            {% for error in formulario.roles.errors %}<small class="error-campo">{{ error }}</small>{% endfor %}
+        </fieldset>
+
+        <div class="formulario-acciones">
+            <a class="usuarios-cancelar" href="{% url 'autenticacion:usuarios' %}">Cancelar</a>
+            <button type="submit" class="usuarios-boton">Crear usuario</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

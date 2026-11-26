@@ -1,0 +1,369 @@
+/* ========================================
+   DASHBOARD PRINCIPAL
+======================================== */
+
+.bienvenida {
+    margin-bottom: 28px;
+}
+
+.bienvenida h1 {
+    font-size: 32px;
+    font-weight: 750;
+    color: #033b3b;
+    letter-spacing: -0.8px;
+    margin-bottom: 8px;
+}
+
+.bienvenida p {
+    font-size: 14px;
+    color: #64748b;
+}
+
+/* ========================================
+   INDICADORES FINANCIEROS
+======================================== */
+
+.indicadores-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.indicador-card {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    min-width: 0;
+    min-height: 125px;
+    padding: 20px;
+
+    background: linear-gradient(
+        145deg,
+        #ffffff,
+        #f6faf7
+    );
+
+    border: 1px solid #e2ebe5;
+    border-radius: 20px;
+
+    box-shadow: 0 5px 18px rgba(0, 70, 40, 0.08);
+
+    overflow: hidden;
+    transition: transform 0.25s ease,
+                box-shadow 0.25s ease;
+}
+
+.indicador-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 10px 25px
+        rgba(0, 70, 40, 0.14);
+}
+
+/* DECORACIÓN VERDE */
+
+.indicador-card::after {
+    content: "";
+
+    position: absolute;
+    bottom: -45px;
+    right: -35px;
+
+    width: 100px;
+    height: 100px;
+
+    border-radius: 50%;
+
+    background: rgba(168, 245, 45, 0.10);
+
+    pointer-events: none;
+}
+
+/* ICONOS */
+
+.indicador-icono {
+    display: grid;
+    place-items: center;
+
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+
+    border-radius: 15px;
+}
+
+.indicador-icono svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 1.8;
+}
+
+.icono-capital {
+    background: #e1f8e8;
+    color: #008b43;
+}
+
+.icono-prestamos {
+    background: #eafbd9;
+    color: #159447;
+}
+
+.icono-vencidas {
+    background: #fff0f0;
+    color: #dc2626;
+}
+
+.icono-garantias {
+    background: #f1eaff;
+    color: #7c3aed;
+}
+
+/* INFORMACIÓN */
+
+.indicador-info {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.indicador-info p {
+    font-size: 14px;
+    font-weight: 500;
+    color: #344054;
+    margin-bottom: 5px;
+}
+
+.indicador-info h2 {
+    font-size: clamp(21px, 1.8vw, 30px);
+    font-weight: 800;
+    color: #101828;
+    letter-spacing: -0.8px;
+    margin-bottom: 5px;
+    overflow-wrap: anywhere;
+}
+
+.indicador-info span {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* ========================================
+   DISEÑO RESPONSIVE
+======================================== */
+
+@media (max-width: 1450px) {
+
+    .indicadores-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+@media (max-width: 700px) {
+
+    .indicadores-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .bienvenida h1 {
+        font-size: 24px;
+    }
+
+    .indicador-card {
+        min-height: 105px;
+        padding: 16px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .indicador-card {
+        transition: none;
+    }
+
+    .indicador-card:hover {
+        transform: none;
+    }
+
+}
+
+/* ========================================
+   RESUMEN DE OPERACIONES FINANCIERAS
+======================================== */
+
+.resumen-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.62fr) minmax(330px, 1fr);
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.resumen-panel {
+    min-width: 0;
+    padding: 19px 20px;
+    border: 1px solid #e2ebe5;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgba(0, 70, 40, .08);
+}
+
+.panel-encabezado,
+.panel-titulo,
+.leyenda-chart,
+.leyenda-chart span {
+    display: flex;
+    align-items: center;
+}
+
+.panel-encabezado {
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 15px;
+}
+
+.panel-titulo { min-width: 0; gap: 12px; }
+
+.panel-titulo > svg,
+.panel-titulo > i svg {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 auto;
+    color: #079447;
+    stroke-width: 2.4;
+}
+
+.panel-titulo h2 {
+    overflow: hidden;
+    color: #101828;
+    font-size: 19px;
+    font-weight: 750;
+    letter-spacing: -.35px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.leyenda-chart { flex: 0 0 auto; gap: 15px; color: #344054; font-size: 11px; font-weight: 600; }
+.leyenda-chart span { gap: 6px; }
+.punto-leyenda { display: inline-block; width: 12px; height: 12px; flex: 0 0 auto; border-radius: 4px; }
+.punto-leyenda.prestado { background: #079b46; }
+.punto-leyenda.recuperado { background: #a8ed16; }
+
+.grafico-mensual {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    height: 230px;
+    padding-top: 3px;
+}
+
+.eje-y { position: relative; height: calc(100% - 25px); color: #475467; font-size: 10px; }
+.eje-y span { position: absolute; right: 8px; transform: translateY(-50%); white-space: nowrap; }
+.eje-y span:first-child { transform: translateY(0); }
+.eje-y span:last-child { transform: translateY(-100%); }
+
+.zona-grafico { position: relative; min-width: 0; height: 100%; }
+.lineas-grafico { position: absolute; inset: 0 0 25px; }
+.lineas-grafico span { position: absolute; right: 0; left: 0; height: 1px; background: #e7edf0; }
+.lineas-grafico span:last-child { background: #aebcc5; }
+
+.columnas-grafico {
+    position: absolute;
+    z-index: 1;
+    inset: 0 7px 0 0;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.grupo-mes { display: grid; min-width: 0; height: 100%; grid-template-rows: minmax(0, 1fr) 25px; }
+.barras-mes { display: flex; min-height: 0; align-items: end; justify-content: center; gap: 4px; padding: 0 3px; }
+.barra { position: relative; width: min(42%, 32px); min-height: 0; border-radius: 6px 6px 0 0; }
+.barra-prestamo { background: linear-gradient(180deg, #10a94d, #078a41); }
+.barra-recuperacion { background: linear-gradient(180deg, #b2ef18, #91da0a); }
+.barra span { position: absolute; top: -18px; left: 50%; color: #344054; font-size: 9px; font-weight: 700; white-space: nowrap; transform: translateX(-50%); }
+.etiqueta-mes { align-self: end; color: #344054; font-size: 11px; text-align: center; }
+
+.estado-vacio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    color: #667085;
+    text-align: center;
+}
+
+.estado-vacio > svg { width: 31px; height: 31px; color: #8aa69a; }
+.estado-vacio strong { color: #344054; font-size: 13px; }
+.estado-vacio span { max-width: 330px; font-size: 11px; line-height: 1.45; }
+.estado-vacio-chart { min-height: 230px; }
+.estado-vacio-cartera { min-height: 230px; }
+
+.cartera-contenido { display: flex; min-height: 230px; align-items: center; justify-content: space-around; gap: 22px; }
+.grafico-donut {
+    display: grid;
+    width: clamp(135px, 12vw, 180px);
+    aspect-ratio: 1;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 50%;
+    background: conic-gradient(#079b46 0 var(--porcentaje-vigente), #a8ed16 var(--porcentaje-vigente) 100%);
+}
+
+.grafico-donut.solo-vigente { background: #079b46; }
+.centro-donut { display: flex; width: 70%; height: 70%; align-items: center; justify-content: center; flex-direction: column; border-radius: 50%; background: #fff; }
+.centro-donut strong { color: #101828; font-size: clamp(24px, 2vw, 34px); font-weight: 800; line-height: 1.1; }
+.centro-donut span { margin-top: 3px; color: #344054; font-size: 12px; }
+.leyenda-cartera { display: grid; width: min(100%, 240px); gap: 12px; }
+.item-cartera { display: grid; grid-template-columns: 13px minmax(0, 1fr) auto; align-items: start; gap: 9px; padding-bottom: 10px; border-bottom: 1px solid #e8edf0; }
+.item-cartera:last-child { padding-bottom: 0; border-bottom: 0; }
+.item-cartera .punto-leyenda { margin-top: 3px; }
+.item-cartera div { display: grid; gap: 3px; }
+.item-cartera strong, .item-cartera b { color: #344054; font-size: 12px; }
+.item-cartera span { color: #475467; font-size: 11px; }
+.item-cartera b { color: #101828; font-size: 13px; }
+
+.panel-ultimas { padding-bottom: 12px; }
+.encabezado-operaciones { margin-bottom: 11px; }
+.ver-todas { display: inline-flex; align-items: center; gap: 7px; padding: 7px 13px; border: 1px solid #079b46; border-radius: 999px; color: #07863f; font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.ver-todas:hover { color: #fff; background: #079b46; }
+.ver-todas svg { width: 15px; height: 15px; }
+.tabla-contenedor { width: 100%; overflow-x: auto; }
+.tabla-operaciones { width: 100%; border-collapse: collapse; color: #344054; font-size: 12px; text-align: left; }
+.tabla-operaciones th { padding: 9px 14px; color: #101828; background: #e2f8e3; font-weight: 700; white-space: nowrap; }
+.tabla-operaciones th:first-child { border-radius: 9px 0 0 9px; }
+.tabla-operaciones th:last-child { border-radius: 0 9px 9px 0; }
+.tabla-operaciones td { padding: 9px 14px; border-bottom: 1px solid #e6ebef; white-space: nowrap; }
+.tabla-operaciones tbody tr:last-child td { border-bottom: 0; }
+.tabla-operaciones .codigo-operacion { color: #101828; font-weight: 600; }
+.tabla-operaciones .monto-operacion { color: #101828; font-weight: 700; }
+.estado-operacion { display: inline-flex; min-width: 96px; align-items: center; justify-content: center; gap: 7px; padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.estado-operacion i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.estado-vigente { color: #087b35; background: #ddf8df; }
+.estado-pendiente { color: #a66a00; background: #fff5c8; }
+.estado-vencido { color: #c52222; background: #ffe1e1; }
+.estado-cancelado { color: #475467; background: #eef1f3; }
+.tabla-operaciones .tabla-vacia { height: 98px; color: #667085; text-align: center; white-space: normal; }
+
+@media (max-width: 1100px) {
+    .resumen-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+    .resumen-panel { padding: 15px 12px; border-radius: 15px; }
+    .panel-encabezado { align-items: flex-start; flex-wrap: wrap; }
+    .panel-titulo h2 { font-size: 16px; }
+    .leyenda-chart { gap: 9px; font-size: 10px; }
+    .grafico-mensual { grid-template-columns: 50px minmax(0, 1fr); height: 200px; }
+    .columnas-grafico { gap: 2px; }
+    .barra span { font-size: 7px; }
+    .cartera-contenido { min-height: 185px; gap: 12px; }
+    .grafico-donut { width: 125px; }
+    .item-cartera { gap: 6px; }
+    .tabla-operaciones { min-width: 650px; }
+}

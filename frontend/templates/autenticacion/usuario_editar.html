@@ -1,0 +1,271 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block titulo %}
+    Editar usuario | Sistema de Gestión de Préstamos
+{% endblock %}
+
+
+{% block estilos %}
+
+    <link rel="stylesheet"
+          href="{% static 'css/componentes.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'css/usuarios.css' %}">
+
+{% endblock %}
+
+
+{% block contenido %}
+
+<section class="usuarios-encabezado encabezado-editar-usuario">
+
+    <div>
+
+        <h1>Editar usuario</h1>
+
+        <p>
+            Actualiza la información del trabajador.
+        </p>
+
+    </div>
+
+    <a href="{% url 'autenticacion:usuarios' %}"
+       class="btn-secundario">
+
+        <i data-lucide="arrow-left"></i>
+        Volver
+
+    </a>
+
+</section>
+
+
+<section class="panel-usuarios panel-edicion-usuario">
+
+    <!-- PERFIL DEL USUARIO -->
+
+    <div class="perfil-edicion">
+
+        <div class="perfil-edicion-avatar">
+
+            {{ usuario_editar.nombres|first|upper }}{{ usuario_editar.apellidos|first|upper }}
+
+        </div>
+
+        <div class="perfil-edicion-info">
+
+            <h2>{{ usuario_editar.nombre_completo }}</h2>
+
+            <p>@{{ usuario_editar.nombre_usuario }}</p>
+
+            {% if not usuario_editar.activo %}
+
+                <span class="estado inactivo">
+                    Inactivo
+                </span>
+
+            {% elif usuario_editar.esta_bloqueado %}
+
+                <span class="estado bloqueado">
+                    Bloqueado
+                </span>
+
+            {% else %}
+
+                <span class="estado activo">
+                    Activo
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- FORMULARIO -->
+
+    <form method="POST" class="formulario-usuario">
+
+        {% csrf_token %}
+
+        {% if formulario.non_field_errors %}
+
+            <div class="formulario-error">
+
+                {{ formulario.non_field_errors }}
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- INFORMACIÓN PERSONAL -->
+
+        <div class="formulario-seccion">
+
+            <h2>
+
+                <i data-lucide="user-round"></i>
+                Información personal
+
+            </h2>
+
+            <p>
+                Modifica los datos personales del trabajador.
+            </p>
+
+            <div class="formulario-grid">
+
+                <div class="formulario-campo">
+
+                    {{ formulario.nombres.label_tag }}
+                    {{ formulario.nombres }}
+                    {{ formulario.nombres.errors }}
+
+                </div>
+
+                <div class="formulario-campo">
+
+                    {{ formulario.apellidos.label_tag }}
+                    {{ formulario.apellidos }}
+                    {{ formulario.apellidos.errors }}
+
+                </div>
+
+                <div class="formulario-campo">
+
+                    {{ formulario.documento.label_tag }}
+                    {{ formulario.documento }}
+                    {{ formulario.documento.errors }}
+
+                </div>
+
+                <div class="formulario-campo">
+
+                    {{ formulario.correo.label_tag }}
+                    {{ formulario.correo }}
+                    {{ formulario.correo.errors }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INFORMACIÓN DE ACCESO -->
+
+        <div class="formulario-seccion">
+
+            <h2>
+
+                <i data-lucide="lock-keyhole"></i>
+                Información de acceso
+
+            </h2>
+
+            <p>
+                Actualiza el nombre de usuario.
+            </p>
+
+            <div class="formulario-grid">
+
+                <div class="formulario-campo">
+
+                    {{ formulario.nombre_usuario.label_tag }}
+                    {{ formulario.nombre_usuario }}
+                    {{ formulario.nombre_usuario.errors }}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ROLES ACTUALES -->
+
+        <div class="formulario-seccion">
+
+            <h2>
+
+                <i data-lucide="shield-check"></i>
+                Roles actuales
+
+            </h2>
+
+            <p>
+                Roles asignados actualmente a esta cuenta.
+            </p>
+
+            {% for asignacion in usuario_editar.roles_asignados.all %}
+
+                <span class="etiqueta-rol">
+
+                    {{ asignacion.rol.nombre }}
+
+                    {% if not asignacion.rol.activo %}
+                        (Inactivo)
+                    {% endif %}
+
+                </span>
+
+            {% empty %}
+
+                <p>Sin roles asignados.</p>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- AVISO DE SEGURIDAD -->
+
+        <div class="aviso-seguridad">
+
+            <i data-lucide="shield-alert"></i>
+
+            <div>
+
+                <strong>Seguridad de la cuenta</strong>
+
+                <p>
+                    La edición de estos datos no modifica
+                    la contraseña, los roles ni los permisos
+                    del usuario.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTONES -->
+
+        <div class="formulario-acciones">
+
+            <a href="{% url 'autenticacion:usuarios' %}"
+               class="btn-secundario">
+
+                Cancelar
+
+            </a>
+
+            <button type="submit"
+                    class="btn-primario">
+
+                <i data-lucide="save"></i>
+                Guardar cambios
+
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+{% endblock %}

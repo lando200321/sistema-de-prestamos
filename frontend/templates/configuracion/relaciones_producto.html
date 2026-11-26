@@ -1,0 +1,11 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block titulo %}Relaciones de {{ producto.nombre }} | Configuración{% endblock %}
+{% block estilos %}<link rel="stylesheet" href="{% static 'css/configuracion.css' %}">{% endblock %}
+{% block contenido %}
+<header class="config-encabezado"><div><a class="config-miga" href="{% url 'configuracion:productos' %}">Productos crediticios</a><h1>Garantías y frecuencias</h1><p>{{ producto.codigo }} · {{ producto.nombre }}</p></div></header>
+<section class="config-panel config-form-panel"><form method="post">{% csrf_token %}{% if formulario.non_field_errors %}<div class="config-error" role="alert">{{ formulario.non_field_errors }}</div>{% endif %}
+  {% for field in formulario %}<fieldset class="config-opciones"><legend>{{ field.label }}</legend><p>Solo se pueden asociar opciones activas.</p>{{ field }}{% for error in field.errors %}<small class="config-error-text">{{ error }}</small>{% endfor %}</fieldset>{% endfor %}
+  <div class="config-form-acciones"><a class="config-boton secundario" href="{% url 'configuracion:productos' %}">Cancelar</a><button class="config-boton primario" type="submit">Guardar asociaciones</button></div>
+</form></section>
+{% endblock %}

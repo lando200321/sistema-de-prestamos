@@ -1,0 +1,254 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load l10n %}
+
+{% block titulo %}
+    Dashboard | Sistema de Préstamos
+{% endblock %}
+
+{% block estilos %}
+    <link rel="stylesheet"
+          href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block contenido %}
+
+<!-- BIENVENIDA -->
+
+<section class="bienvenida">
+
+    <h1>Bienvenido, {{ usuario.nombres }}</h1>
+
+    <p>
+        Resumen general de las operaciones financieras.
+    </p>
+
+</section>
+
+<!-- INDICADORES FINANCIEROS -->
+
+<section class="indicadores-grid">
+
+    <!-- CAPITAL PRESTADO -->
+
+    <article class="indicador-card">
+
+        <div class="indicador-icono icono-capital">
+            <i data-lucide="coins"></i>
+        </div>
+
+        <div class="indicador-info">
+
+            <p>Capital prestado</p>
+
+            <h2>
+                S/ {{ indicadores.capital_prestado|floatformat:"2g" }}
+            </h2>
+
+            <span>Capital histórico en soles</span>
+
+        </div>
+
+    </article>
+
+    <!-- PRÉSTAMOS ACTIVOS -->
+
+    <article class="indicador-card">
+
+        <div class="indicador-icono icono-prestamos">
+            <i data-lucide="handshake"></i>
+        </div>
+
+        <div class="indicador-info">
+
+            <p>Préstamos activos</p>
+
+            <h2>{{ indicadores.prestamos_activos }}</h2>
+
+            <span>Créditos en gestión</span>
+
+        </div>
+
+    </article>
+
+    <!-- CUOTAS VENCIDAS -->
+
+    <article class="indicador-card">
+
+        <div class="indicador-icono icono-vencidas">
+            <i data-lucide="calendar-clock"></i>
+        </div>
+
+        <div class="indicador-info">
+
+            <p>Cuotas vencidas</p>
+
+            <h2>{{ indicadores.cuotas_vencidas }}</h2>
+
+            <span>Pendientes de regularización</span>
+
+        </div>
+
+    </article>
+
+    <!-- GARANTÍAS VIGENTES -->
+
+    <article class="indicador-card">
+
+        <div class="indicador-icono icono-garantias">
+            <i data-lucide="shield-check"></i>
+        </div>
+
+        <div class="indicador-info">
+
+            <p>Garantías vigentes</p>
+
+            <h2>{{ indicadores.garantias_vigentes }}</h2>
+
+            <span>Garantías activas</span>
+
+        </div>
+
+    </article>
+
+</section>
+
+<!-- GRÁFICOS Y ESTADO DE CARTERA -->
+
+<section class="resumen-grid" aria-label="Resumen financiero">
+
+    <article class="resumen-panel panel-evolucion">
+        <div class="panel-encabezado">
+            <div class="panel-titulo">
+                <i data-lucide="chart-no-axes-column" aria-hidden="true"></i>
+                <h2>Préstamos y recuperaciones</h2>
+            </div>
+            <div class="leyenda-chart" aria-label="Series del gráfico">
+                <span><i class="punto-leyenda prestado"></i>Préstamos</span>
+                <span><i class="punto-leyenda recuperado"></i>Recuperaciones</span>
+            </div>
+        </div>
+
+        {% if resumen.grafico_sin_datos %}
+            <div class="estado-vacio estado-vacio-chart">
+                <i data-lucide="chart-no-axes-column-increasing" aria-hidden="true"></i>
+                <strong>Aún no hay operaciones para graficar</strong>
+                <span>El resumen se actualizará cuando se registren préstamos o pagos.</span>
+            </div>
+        {% else %}
+            <div class="grafico-mensual" role="img" aria-label="Montos mensuales de préstamos desembolsados y recuperaciones confirmadas durante los últimos seis meses">
+                <div class="eje-y" aria-hidden="true">
+                    {% for tick in resumen.eje_grafico %}
+                        <span style="top: {{ tick.posicion }}%">S/ {{ tick.valor|floatformat:"0g" }}</span>
+                    {% endfor %}
+                </div>
+                <div class="zona-grafico">
+                    <div class="lineas-grafico" aria-hidden="true">
+                        {% for tick in resumen.eje_grafico %}<span style="top: {{ tick.posicion }}%"></span>{% endfor %}
+                    </div>
+                    <div class="columnas-grafico">
+                        {% for mes in resumen.serie_mensual %}
+                            <div class="grupo-mes">
+                                <div class="barras-mes">
+                                    <div class="barra barra-prestamo" style="height: {{ mes.prestado_pct }}%" title="Préstamos: S/ {{ mes.prestado|floatformat:'2g' }}">
+                                        {% if mes.prestado %}<span>S/ {{ mes.prestado|floatformat:"0g" }}</span>{% endif %}
+                                    </div>
+                                    <div class="barra barra-recuperacion" style="height: {{ mes.recuperado_pct }}%" title="Recuperaciones: S/ {{ mes.recuperado|floatformat:'2g' }}">
+                                        {% if mes.recuperado %}<span>S/ {{ mes.recuperado|floatformat:"0g" }}</span>{% endif %}
+                                    </div>
+                                </div>
+                                <span class="etiqueta-mes">{{ mes.mes }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </article>
+
+    <article class="resumen-panel panel-cartera">
+        <div class="panel-encabezado">
+            <div class="panel-titulo">
+                <i data-lucide="pie-chart" aria-hidden="true"></i>
+                <h2>Estado de cartera</h2>
+            </div>
+        </div>
+
+        {% if resumen.cartera_sin_datos %}
+            <div class="estado-vacio estado-vacio-cartera">
+                <i data-lucide="pie-chart" aria-hidden="true"></i>
+                <strong>Sin cartera para mostrar</strong>
+                <span>La distribución aparecerá cuando existan préstamos activos.</span>
+            </div>
+        {% else %}
+            <div class="cartera-contenido">
+                <div class="grafico-donut{% if resumen.porcentaje_vigente == 100 %} solo-vigente{% endif %}" style="--porcentaje-vigente: {{ resumen.porcentaje_vigente }}%" role="img" aria-label="{{ resumen.porcentaje_vigente }} por ciento de la cartera está vigente">
+                    <div class="centro-donut">
+                        <strong>{{ resumen.porcentaje_vigente }}%</strong>
+                        <span>Vigente</span>
+                    </div>
+                </div>
+                <div class="leyenda-cartera">
+                    <div class="item-cartera">
+                        <i class="punto-leyenda prestado"></i>
+                        <div><strong>Vigente</strong><span>S/ {{ resumen.cartera_vigente|floatformat:"2g" }}</span></div>
+                        <b>{{ resumen.porcentaje_vigente }}%</b>
+                    </div>
+                    <div class="item-cartera">
+                        <i class="punto-leyenda recuperado"></i>
+                        <div><strong>En seguimiento</strong><span>S/ {{ resumen.cartera_seguimiento|floatformat:"2g" }}</span></div>
+                        <b>{{ resumen.porcentaje_seguimiento }}%</b>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </article>
+
+</section>
+
+<!-- ÚLTIMAS OPERACIONES -->
+
+<section class="resumen-panel panel-ultimas" id="ultimas-operaciones">
+    <div class="panel-encabezado encabezado-operaciones">
+        <div class="panel-titulo">
+            <i data-lucide="list" aria-hidden="true"></i>
+            <h2>Últimas operaciones</h2>
+        </div>
+        <a class="ver-todas" href="#ultimas-operaciones">Ver todas <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+    </div>
+
+    <div class="tabla-contenedor">
+        <table class="tabla-operaciones">
+            <thead>
+                <tr>
+                    <th scope="col">Código</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Monto</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for operacion in resumen.operaciones_recientes %}
+                    <tr>
+                        <td class="codigo-operacion">{{ operacion.codigo }}</td>
+                        <td>{{ operacion.cliente }}</td>
+                        <td class="monto-operacion">S/ {{ operacion.monto|floatformat:"2g" }}</td>
+                        <td>{{ operacion.fecha|date:"d/m/Y" }}</td>
+                        <td><span class="estado-operacion estado-{{ operacion.clase_estado }}"><i></i>{{ operacion.estado }}</span></td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td class="tabla-vacia" colspan="5">Aún no hay préstamos desembolsados para mostrar.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/dashboard.js' %}" defer></script>
+{% endblock %}

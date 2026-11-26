@@ -1,0 +1,255 @@
+/* ========================================
+   MENÚ LATERAL DEL SISTEMA
+======================================== */
+
+.sidebar {
+    width: 285px;
+    min-width: 285px;
+    height: 100dvh;
+    position: sticky;
+    top: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    background: linear-gradient(
+        165deg,
+        #022e30 0%,
+        #033b3b 45%,
+        #00543e 100%
+    );
+
+    padding: 28px 18px;
+    color: #ffffff;
+    overflow-y: auto;
+}
+
+/* MARCA DEL SISTEMA */
+
+.sidebar-marca {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 4px;
+    margin-bottom: 35px;
+}
+
+.marca-icono {
+    color: #a8f52d;
+    display: flex;
+    align-items: center;
+}
+
+.marca-icono svg {
+    width: 45px;
+    height: 45px;
+    stroke-width: 2.5;
+}
+
+.marca-texto {
+    font-size: 18px;
+    font-weight: 750;
+    line-height: 1.25;
+    letter-spacing: -0.5px;
+}
+
+.marca-texto span {
+    color: #a8f52d;
+}
+
+/* MENÚ PRINCIPAL */
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 17px;
+
+    background: transparent;
+    border: none;
+    border-radius: 16px;
+
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: left;
+
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.menu-item svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    stroke-width: 1.8;
+}
+
+/* EFECTO AL PASAR EL CURSOR */
+
+.menu-item:not(:disabled):hover {
+    background: rgba(168, 245, 45, 0.12);
+    color: #b5ff45;
+    transform: translateX(3px);
+}
+
+/* OPCIÓN SELECCIONADA */
+
+.menu-item.activo,
+.menu-item.activo:hover {
+    background: linear-gradient(
+        110deg,
+        #b5ff32,
+        #8df522,
+        #42d94a
+    );
+
+    color: #023b30;
+    font-weight: 700;
+
+    box-shadow: 0 5px 18px rgba(132, 255, 30, 0.16);
+}
+
+/* MÓDULOS TODAVÍA NO IMPLEMENTADOS */
+
+.menu-item:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* CIERRE DE SESIÓN */
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 25px;
+}
+
+.sidebar-footer form {
+    border-top: 1px solid rgba(168, 245, 45, 0.3);
+    padding-top: 20px;
+}
+
+.cerrar-sesion:hover {
+    background: rgba(255, 80, 80, 0.12) !important;
+    color: #ff9b9b !important;
+}
+
+/* BARRA DE DESPLAZAMIENTO */
+
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(168, 245, 45, 0.3);
+    border-radius: 10px;
+}
+
+/* ========================================
+   MENÚ LATERAL PLEGABLE
+======================================== */
+
+.sidebar {
+    transition: width 0.3s ease,
+                min-width 0.3s ease,
+                padding 0.3s ease;
+    flex-shrink: 0;
+    overflow-x: hidden;
+}
+
+.sidebar-controles {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 18px;
+}
+
+.toggle-sidebar {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+
+    color: #ffffff;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.toggle-sidebar:hover {
+    background: #a8f52d;
+    color: #033b3b;
+}
+
+.toggle-sidebar svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* MENÚ COMPRIMIDO */
+
+.sidebar.comprimido {
+    width: 80px;
+    min-width: 80px;
+    padding: 28px 12px;
+}
+
+.sidebar.comprimido .sidebar-controles {
+    justify-content: center;
+}
+
+.sidebar.comprimido .marca-texto {
+    display: none;
+}
+
+.sidebar.comprimido .sidebar-marca {
+    justify-content: center;
+    padding: 0;
+}
+
+.sidebar.comprimido .marca-icono svg {
+    width: 36px;
+    height: 36px;
+}
+
+.sidebar.comprimido .menu-item span {
+    display: none;
+}
+
+.sidebar.comprimido .menu-item {
+    justify-content: center;
+    padding: 12px;
+    gap: 0;
+}
+
+.sidebar.comprimido .menu-item svg {
+    width: 25px;
+    height: 25px;
+}
+
+.sidebar.comprimido .menu-item:hover {
+    transform: none;
+}
+
+.menu-item span {
+    white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar {
+        transition: none;
+    }
+}
